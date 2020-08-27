@@ -15,7 +15,7 @@ type Retriever interface {
 	Fetch() (string, error)
 }
 
-// GetPosts gets all blog post data
+// GetPosts gets all blog post data.
 func GetPosts(retriever Retriever) ([]blog.Post, error) {
 	rawData, err := retriever.Fetch()
 	if err != nil {
