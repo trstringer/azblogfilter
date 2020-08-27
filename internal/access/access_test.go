@@ -1,9 +1,6 @@
 package access
 
-import (
-	"testing"
-	"time"
-)
+import "testing"
 
 type fakeRetriever struct{}
 
@@ -46,17 +43,5 @@ func TestGetPosts(t *testing.T) {
 	actualItemCount := len(blogPosts)
 	if actualItemCount != desiredItemCount {
 		t.Errorf("Expected %d items, got %d", desiredItemCount, actualItemCount)
-	}
-}
-
-func TestDateTimeStringToTime(t *testing.T) {
-	input := "Thu, 06 Aug 2020 09:00:11 Z"
-	desiredOutput := time.Date(2020, time.August, 6, 9, 0, 11, 0, time.UTC)
-	actualOutput, err := datetimeStringToTime(input)
-	if err != nil {
-		t.Errorf("Error converting time: %v", err)
-	}
-	if !actualOutput.Equal(desiredOutput) {
-		t.Errorf("Expected %v, got %v", desiredOutput, actualOutput)
 	}
 }

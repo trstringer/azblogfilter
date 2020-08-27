@@ -25,6 +25,8 @@ import (
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/viper"
 	"github.com/trstringer/go-systemd-time/systemdtime"
+
+	"github.com/trstringer/azblogfilter/internal/config"
 )
 
 var (
@@ -32,6 +34,8 @@ var (
 	keywordsFilter   string
 	categoriesFilter string
 	sinceFilter      string
+	useCache         bool
+	cacheLocation    string
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -45,13 +49,25 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		now := time.Now()
-		adjustedTime, err := systemdtime.AdjustTime(&now, sinceFilter)
-		if err != nil {
-			fmt.Printf("Error converting systemd time: %v\n", err)
+		if !useCache && sinceFilter == "" {
+			fmt.Println("You must specify either --cache or --since")
 			os.Exit(1)
 		}
-		fmt.Printf("Adjusted time is %v\n", adjustedTime)
+
+		since := time.Time{}
+		var err error
+		if sinceFilter != "" {
+			now := time.Now()
+			since, err = systemdtime.AdjustTime(&now, sinceFilter)
+			if err != nil {
+				fmt.Printf("Error converting systemd time: %v\n", err)
+				os.Exit(1)
+			}
+		} else {
+			since = time.Now()
+		}
+
+		getBlogPosts(since, config.Config{})
 	},
 }
 
@@ -71,7 +87,9 @@ func init() {
 
 	rootCmd.Flags().StringVarP(&keywordsFilter, "keywords", "k", "", "keywords filter (case insensitive)")
 	rootCmd.Flags().StringVarP(&categoriesFilter, "categories", "c", "", "categories filter (case insensitive)")
-	rootCmd.Flags().StringVarP(&sinceFilter, "since", "s", "-7d", "filter post with systemd time (man 7 systemd.time). Default -7d")
+	rootCmd.Flags().StringVarP(&sinceFilter, "since", "s", "", "filter post with systemd time (man 7 systemd.time). Default -7d")
+	rootCmd.Flags().BoolVar(&useCache, "cache", false, "use cached value")
+	rootCmd.Flags().StringVar(&cacheLocation, "cache-location", "~/.azblogfilter", "location for cache (default ~/.azblogfilter)")
 }
 
 // initConfig reads in config file and ENV variables if set.

@@ -7,6 +7,9 @@ import (
 	"github.com/trstringer/azblogfilter/internal/blog"
 )
 
+// DateTimeLayout is the standard for layout of Time.
+const DateTimeLayout string = "Mon, 02 Jan 2006 15:04:05 Z"
+
 // Retriever is the interface for retrieving blog data.
 type Retriever interface {
 	Fetch() (string, error)
@@ -39,7 +42,7 @@ func parsePostsXML(rawXML string) *Rss {
 func extractPostsFromRss(rss *Rss) ([]blog.Post, error) {
 	blogPosts := []blog.Post{}
 	for _, blogPostRaw := range rss.Channel.Items {
-		blogPostPublishedTime, err := datetimeStringToTime(blogPostRaw.PublicationDate)
+		blogPostPublishedTime, err := time.Parse(DateTimeLayout, blogPostRaw.PublicationDate)
 		if err != nil {
 			return nil, err
 		}
@@ -54,9 +57,4 @@ func extractPostsFromRss(rss *Rss) ([]blog.Post, error) {
 	}
 
 	return blogPosts, nil
-}
-
-func datetimeStringToTime(input string) (time.Time, error) {
-	layout := "Mon, 02 Jan 2006 15:04:05 Z"
-	return time.Parse(layout, input)
 }
