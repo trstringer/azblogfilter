@@ -32,6 +32,11 @@ func GetPosts(retriever Retriever) ([]blog.Post, error) {
 	return blogPosts, nil
 }
 
+// GetPostsFromWeb gets all blog post data from the web.
+func GetPostsFromWeb() ([]blog.Post, error) {
+	return GetPosts(NewWebRetriever())
+}
+
 func parsePostsXML(rawXML string) *Rss {
 	rss := Rss{}
 	rawXMLBytes := []byte(rawXML)

@@ -71,3 +71,17 @@ func keywordsContainKeyword(input []blog.Keyword, test blog.Keyword) bool {
 
 	return false
 }
+
+func TestGetConfigStrings(t *testing.T) {
+	keywords := "keyword1,keyword2,keyword3"
+	categories := "category1,category2"
+	desiredConfig := Config{
+		Keywords:   []blog.Keyword{"keyword1", "keyword2", "keyword3"},
+		Categories: blog.Categories{"category1", "category2"},
+	}
+	actualConfig := GetConfigFromCLI(keywords, categories)
+
+	if !configsAreEqual(&actualConfig, &desiredConfig) {
+		t.Fatal("Configs from CLI string comparison are unexpectedly different")
+	}
+}
