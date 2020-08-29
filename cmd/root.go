@@ -20,9 +20,11 @@ import (
 	"fmt"
 	"github.com/spf13/cobra"
 	"os"
+	"time"
 
-	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/viper"
+
+	"github.com/trstringer/azblogfilter/internal/cache"
 )
 
 var (
@@ -40,13 +42,26 @@ var outputOptions = []string{"json", "csv"}
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "azblogfilter",
-	Short: "A brief description of your application",
-	Long: `A longer description that spans multiple lines and likely contains
-examples and usage of using your application. For example:
+	Short: "Filter Azure update blog posts",
+	Long: `Filter posts by keywords and categories.
+You can also specify the time filter by using
+a built-in caching mechanism or by specifying
+the time manually
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+Examples:
+	Get all blog posts in the past 7 days.
+
+	$ azblogfilter --since -7d
+
+	Get all blog posts since last run that have
+	Kubernetes or Linux in the title.
+
+	$ azblogfilter --cache --keywords "kubernetes,linux"
+
+	Get all blog posts that have Linux in the title or
+	have the DevOps category.
+
+	$ azblogfilter --cache --keywords linux --categories devops`,
 	Run: func(cmd *cobra.Command, args []string) {
 		err := validateArgs()
 		if err != nil {
@@ -72,6 +87,19 @@ to quickly create a Cobra application.`,
 			os.Exit(1)
 		}
 
+		if useCache {
+			cachePath, err := realCachePath()
+			if err != nil {
+				fmt.Println(err)
+				os.Exit(1)
+			}
+			err = cache.SetLastCachedTime(cachePath, time.Now().UTC())
+			if err != nil {
+				fmt.Println(err)
+				os.Exit(1)
+			}
+		}
+
 		fmt.Print(output)
 	},
 }
@@ -88,34 +116,15 @@ func Execute() {
 func init() {
 	cobra.OnInitialize(initConfig)
 
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.azblogfilter.yaml)")
-
 	rootCmd.Flags().StringVarP(&keywordsFilter, "keywords", "k", "", "keywords filter (case insensitive)")
 	rootCmd.Flags().StringVarP(&categoriesFilter, "categories", "c", "", "categories filter (case insensitive)")
-	rootCmd.Flags().StringVarP(&sinceFilter, "since", "s", "", "filter post with systemd time (man 7 systemd.time). Default -7d")
+	rootCmd.Flags().StringVarP(&sinceFilter, "since", "s", "", "filter post with systemd time (man 7 systemd.time)")
 	rootCmd.Flags().BoolVar(&useCache, "cache", false, "use cached value")
-	rootCmd.Flags().StringVar(&cacheLocation, "cache-location", "~/.azblogfilter", "location for cache (default ~/.azblogfilter)")
-	rootCmd.Flags().StringVarP(&outputFormat, "output", "o", "json", "")
+	rootCmd.Flags().StringVar(&cacheLocation, "cache-location", "~/.azblogfilter", "location for cache")
+	rootCmd.Flags().StringVarP(&outputFormat, "output", "o", "json", "output format, json or csv")
 }
 
-// initConfig reads in config file and ENV variables if set.
 func initConfig() {
-	if cfgFile != "" {
-		// Use config file from the flag.
-		viper.SetConfigFile(cfgFile)
-	} else {
-		// Find home directory.
-		home, err := homedir.Dir()
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
-
-		// Search config in home directory with name ".azblogfilter" (without extension).
-		viper.AddConfigPath(home)
-		viper.SetConfigName(".azblogfilter")
-	}
-
 	viper.AutomaticEnv() // read in environment variables that match
 
 	// If a config file is found, read it in.

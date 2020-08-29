@@ -51,15 +51,27 @@ func effectiveSinceTime() (time.Time, error) {
 		return since, nil
 	}
 
-	realCachePath, err := homedir.Expand(cacheLocation)
+	cachePath, err := realCachePath()
 	if err != nil {
 		return time.Time{}, err
 	}
-	lastCachedTime, err := cache.LastCachedTimeFromFileSystem(realCachePath)
+	lastCachedTime, err := cache.LastCachedTimeFromFileSystem(cachePath)
 	if err != nil {
+		errorMsg := err.Error()
+		if strings.HasSuffix(errorMsg, "no such file or directory") {
+			err = nil
+		}
 		return time.Time{}, err
 	}
 	return lastCachedTime, nil
+}
+
+func realCachePath() (string, error) {
+	cachePath, err := homedir.Expand(cacheLocation)
+	if err != nil {
+		return "", err
+	}
+	return cachePath, nil
 }
 
 func formatBlogPosts(format string, posts []blog.Post) (string, error) {

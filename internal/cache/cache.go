@@ -44,7 +44,7 @@ func LastCachedTimeFromFileSystem(path string) (time.Time, error) {
 // SetLastCachedTime sets the cache for the last time.
 func SetLastCachedTime(path string, lastUpdated time.Time) error {
 	lastUpdatedFormatted := lastUpdated.Format(access.DateTimeLayout)
-	err := ioutil.WriteFile(path, []byte(lastUpdatedFormatted), 755)
+	err := ioutil.WriteFile(path, []byte(lastUpdatedFormatted), 0755)
 	if err != nil {
 		return err
 	}
