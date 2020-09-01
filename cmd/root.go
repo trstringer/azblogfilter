@@ -35,6 +35,7 @@ var (
 	useCache         bool
 	cacheLocation    string
 	outputFormat     string
+	getVersion       bool
 )
 
 var outputOptions = []string{"json", "csv"}
@@ -63,6 +64,10 @@ Examples:
 
 	$ azblogfilter --cache --keywords linux --categories devops`,
 	Run: func(cmd *cobra.Command, args []string) {
+		if getVersion {
+			fmt.Println(version)
+			os.Exit(0)
+		}
 		err := validateArgs()
 		if err != nil {
 			fmt.Println(err)
@@ -122,6 +127,7 @@ func init() {
 	rootCmd.Flags().BoolVar(&useCache, "cache", false, "use cached value")
 	rootCmd.Flags().StringVar(&cacheLocation, "cache-location", "~/.azblogfilter", "location for cache")
 	rootCmd.Flags().StringVarP(&outputFormat, "output", "o", "json", "output format, json or csv")
+	rootCmd.Flags().BoolVarP(&getVersion, "version", "v", false, "get version")
 }
 
 func initConfig() {

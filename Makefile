@@ -5,7 +5,7 @@ GCFLAGS_DEBUG="all=-N -l"
 SYSTEMD_DIR=~/.config/systemd/user
 INSTALL_LOCATION=~/bin
 
-.PHONY: build build-debug test install install-systemd clean
+.PHONY: build build-debug test install install-systemd clean release
 
 build:
 	mkdir -p $(BIN_DIR)
@@ -27,3 +27,11 @@ install-systemd: install
 clean:
 	if [ -d $(BIN_DIR) ]; then rm -rf $(BIN_DIR); fi
 	if [ -f $(INSTALL_LOCATION)/$(BIN) ]; then rm $(INSTALL_LOCATION)/$(BIN); fi
+
+release: build
+	if [ -z "$(shell git status --porcelain)" ]; then \
+		VERSION=$$($(BIN_DIR)/$(BIN) --version); \
+		git tag $$VERSION; \
+	else \
+		echo Working directory not clean, commit changes; \
+	fi
