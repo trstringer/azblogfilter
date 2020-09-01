@@ -2,6 +2,8 @@ BIN_DIR=./bin
 BIN=azblogfilter
 BIN_DEBUG=$(BIN).debug
 GCFLAGS_DEBUG="all=-N -l"
+SYSTEMD_DIR=~/.config/systemd/user
+INSTALL_LOCATION=~/bin
 
 build:
 	mkdir -p $(BIN_DIR)
@@ -13,3 +15,9 @@ build_debug:
 
 test:
 	go test -v ./...
+
+install: build
+	cp $(BIN_DIR)/$(BIN) $(INSTALL_LOCATION)/$(BIN)
+
+install_systemd: install
+	mkdir -p $(SYSTEMD_DIR)
