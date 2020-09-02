@@ -12,12 +12,12 @@ const DateTimeLayout string = "Mon, 02 Jan 2006 15:04:05 Z"
 
 // Retriever is the interface for retrieving blog data.
 type Retriever interface {
-	Fetch() (string, error)
+	Fetch(string) (string, error)
 }
 
 // GetPosts gets all blog post data.
-func GetPosts(retriever Retriever) ([]blog.Post, error) {
-	rawData, err := retriever.Fetch()
+func GetPosts(retriever Retriever, blogUrl string) ([]blog.Post, error) {
+	rawData, err := retriever.Fetch(blogUrl)
 	if err != nil {
 		return nil, err
 	}
@@ -33,8 +33,8 @@ func GetPosts(retriever Retriever) ([]blog.Post, error) {
 }
 
 // GetPostsFromWeb gets all blog post data from the web.
-func GetPostsFromWeb() ([]blog.Post, error) {
-	return GetPosts(NewWebRetriever())
+func GetPostsFromWeb(blogUrl string) ([]blog.Post, error) {
+	return GetPosts(NewWebRetriever(), blogUrl)
 }
 
 func parsePostsXML(rawXML string) *Rss {

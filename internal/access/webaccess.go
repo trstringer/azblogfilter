@@ -10,8 +10,8 @@ import (
 type WebRetriever struct{}
 
 // Fetch gets the raw blog feed content.
-func (w WebRetriever) Fetch() (string, error) {
-	response, err := http.Get("https://azurecomcdn.azureedge.net/en-us/updates/feed/")
+func (w WebRetriever) Fetch(blogUrl string) (string, error) {
+	response, err := http.Get(blogUrl)
 	if err != nil {
 		return "", err
 	}

@@ -4,7 +4,7 @@ import "testing"
 
 type fakeRetriever struct{}
 
-func (t fakeRetriever) Fetch() (string, error) {
+func (t fakeRetriever) Fetch(blogUrl string) (string, error) {
 	rssData := `
 	<rss version='2.0'>
 		<channel>
@@ -34,7 +34,7 @@ func (t fakeRetriever) Fetch() (string, error) {
 
 func TestGetPosts(t *testing.T) {
 	dataRetriever := fakeRetriever{}
-	blogPosts, err := GetPosts(dataRetriever)
+	blogPosts, err := GetPosts(dataRetriever, "")
 	if err != nil {
 		t.Errorf("Expected no error: %v", err)
 	}

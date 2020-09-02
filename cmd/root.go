@@ -20,6 +20,7 @@ import (
 	"fmt"
 	"github.com/spf13/cobra"
 	"os"
+	"strings"
 	"time"
 
 	homedir "github.com/mitchellh/go-homedir"
@@ -37,9 +38,16 @@ var (
 	cacheLocation    string
 	outputFormat     string
 	getVersion       bool
+	blogUrls         []string
 )
 
-var outputOptions = []string{"json", "csv"}
+var (
+	outputOptions   = []string{"json", "csv"}
+	defaultBlogUrls = []string{
+		"https://azurecomcdn.azureedge.net/en-us/updates/feed/",
+		"https://azurecomcdn.azureedge.net/en-us/blog/topics/announcements/feed/",
+	}
+)
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -75,13 +83,17 @@ Examples:
 			os.Exit(1)
 		}
 
+		if len(blogUrls) == 0 {
+			blogUrls = defaultBlogUrls
+		}
+
 		since, err := effectiveSinceTime()
 		if err != nil {
 			fmt.Printf("Error getting last time: %v\n", err)
 			os.Exit(1)
 		}
 
-		posts, err := getBlogPosts(since, keywordsFilter, categoriesFilter)
+		posts, err := getBlogPosts(since, keywordsFilter, categoriesFilter, blogUrls)
 		if err != nil {
 			fmt.Printf("Error getting blog posts: %v\n", err)
 			os.Exit(1)
@@ -154,6 +166,8 @@ func initConfig() {
 
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
-		fmt.Println("Using config file:", viper.ConfigFileUsed())
+		keywordsFilter = strings.Join(viper.GetStringSlice("keywords"), ",")
+		categoriesFilter = strings.Join(viper.GetStringSlice("categories"), ",")
+		blogUrls = viper.GetStringSlice("blogUrls")
 	}
 }

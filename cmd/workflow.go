@@ -15,10 +15,14 @@ import (
 	"github.com/trstringer/azblogfilter/internal/config"
 )
 
-func getBlogPosts(since time.Time, keywords, categories string) ([]blog.Post, error) {
-	blogPosts, err := access.GetPostsFromWeb()
-	if err != nil {
-		return nil, err
+func getBlogPosts(since time.Time, keywords, categories string, blogUrls []string) ([]blog.Post, error) {
+	blogPosts := []blog.Post{}
+	for _, blogUrl := range blogUrls {
+		blogPostsFromUrl, err := access.GetPostsFromWeb(blogUrl)
+		if err != nil {
+			return nil, err
+		}
+		blogPosts = append(blogPosts, blogPostsFromUrl...)
 	}
 
 	blogPostsFiltered := filterBlogPostsByTime(blogPosts, since)
