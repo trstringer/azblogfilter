@@ -15,7 +15,7 @@ import (
 	"github.com/trstringer/azblogfilter/internal/config"
 )
 
-func getBlogPosts(since time.Time, keywords, categories string, blogUrls []string) ([]blog.Post, error) {
+func getBlogPosts(blogFilter filter, blogUrls []string) ([]blog.Post, error) {
 	blogPosts := []blog.Post{}
 	for _, blogUrl := range blogUrls {
 		blogPostsFromUrl, err := access.GetPostsFromWeb(blogUrl)
@@ -25,8 +25,8 @@ func getBlogPosts(since time.Time, keywords, categories string, blogUrls []strin
 		blogPosts = append(blogPosts, blogPostsFromUrl...)
 	}
 
-	blogPostsFiltered := filterBlogPostsByTime(blogPosts, since)
-	config := config.GetConfigFromCLI(keywords, categories)
+	blogPostsFiltered := filterBlogPostsByTime(blogPosts, blogFilter.since)
+	config := config.GetConfigFromCLI(blogFilter.keywords, blogFilter.categories)
 	blogPostsFiltered = config.FilterBlogPosts(blogPostsFiltered)
 
 	return blogPostsFiltered, nil

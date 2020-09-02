@@ -93,7 +93,12 @@ Examples:
 			os.Exit(1)
 		}
 
-		posts, err := getBlogPosts(since, keywordsFilter, categoriesFilter, blogUrls)
+		blogFilter := filter{
+			since:      since,
+			keywords:   keywordsFilter,
+			categories: categoriesFilter,
+		}
+		posts, err := getBlogPosts(blogFilter, blogUrls)
 		if err != nil {
 			fmt.Printf("Error getting blog posts: %v\n", err)
 			os.Exit(1)
