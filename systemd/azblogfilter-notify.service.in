@@ -1,0 +1,7 @@
+[Unit]
+Description=Notify when a new Azure blog post is released
+
+[Service]
+Type=simple
+ExecStart=BIN_PATH --cache -o csv | NOTIFY_SCRIPT_PATH
+Environment="DISPLAY=:0" "XAUTHORITY=/home/TARGET_USER/.Xauthority"

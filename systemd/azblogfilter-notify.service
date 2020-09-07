@@ -1,9 +1,0 @@
-[Unit]
-Description=Notify when a new Azure blog post is released
-
-[Service]
-Type=simple
-ExecStart=~/bin/azblogfilter --cache
-
-[Install]
-WantedBy=default.target

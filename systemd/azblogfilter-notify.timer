@@ -1,0 +1,10 @@
+[Unit]
+Description=Timer for azblognotify
+
+[Timer]
+OnBootSec=2min
+OnCalendar=*:0/30
+Unit=azblogfilter-notify.service
+
+[Install]
+WantedBy=default.target
