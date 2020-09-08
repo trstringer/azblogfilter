@@ -21,10 +21,13 @@ func (w WebRetriever) Fetch(blogUrl string) (string, error) {
 		blogUrl,
 		randomCacheNumber,
 	)
-	response, err := http.Get(blogUrlModified)
-	fmt.Printf("Blog URL: %s\n", blogUrlModified)
-	fmt.Printf("Response content length: %d\n", response.ContentLength)
-	fmt.Printf("Response status: %d %s\n", response.StatusCode, response.Status)
+	httpClient := &http.Client{}
+	request, err := http.NewRequest("GET", blogUrlModified, nil)
+	if err != nil {
+		return "", err
+	}
+	request.Header.Add("User-Agent", "Mozilla/5.0")
+	response, err := httpClient.Do(request)
 	if err != nil {
 		return "", err
 	}
