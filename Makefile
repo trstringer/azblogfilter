@@ -15,9 +15,11 @@ INSTALL_LOCATION=~/bin
 .PHONY: build build-debug test install install-systemd clean release install-notify bin-dir
 
 build: bin-dir
+	sed -i "s|LOCAL|$$(git rev-parse --short HEAD)|" ./cmd/version.go
 	go build -o $(BIN_DIR)/$(BIN)
 
 build-debug: bin-dir
+	sed -i "s|LOCAL|$(git rev-parse --short HEAD)|" ./cmd/version.go
 	go build -o $(BIN_DIR)/$(BIN_DEBUG) -gcflags=$(GCFLAGS_DEBUG)
 
 bin-dir:
