@@ -1,0 +1,14 @@
+on:
+  push:
+    branch:
+      - master
+
+jobs:
+  build:
+    name: cicd
+    runs-on: ubuntu-lastest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+      - name: build
+        run: make build
