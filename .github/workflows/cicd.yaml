@@ -14,12 +14,12 @@ jobs:
         run: make build
       - name: version
         run: echo "::set-output name=version::$(./bin/azblogfilter --version)"
-      - name: release
-        uses: actions/create-release@v1
-        with:
-          draft: false
-          prerelease: false
-          release_name: ${{ github.ref }}-${{ github.sha }}
-          tag_name: ${{ github.ref }}
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
+        #       - name: release
+        #         uses: actions/create-release@v1
+        #         with:
+        #           draft: false
+        #           prerelease: false
+        #           release_name: ${{ github.ref }}-${{ github.sha }}
+        #           tag_name: ${{ github.ref }}
+        #         env:
+        #           GITHUB_TOKEN: ${{ github.token }}
