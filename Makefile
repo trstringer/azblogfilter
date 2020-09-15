@@ -17,6 +17,7 @@ INSTALL_LOCATION=~/bin
 build: bin-dir
 	sed -i "s|LOCAL|$$(git rev-parse --short HEAD)|" ./cmd/version.go
 	go build -o $(BIN_DIR)/$(BIN)
+	git checkout -- ./cmd/version.go
 
 build-debug: bin-dir
 	sed -i "s|LOCAL|$(git rev-parse --short HEAD)|" ./cmd/version.go
