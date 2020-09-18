@@ -15,9 +15,13 @@ INSTALL_LOCATION=~/bin
 .PHONY: build build-debug test install install-systemd clean release install-notify bin-dir
 
 build: bin-dir
-	sed -i "s|LOCAL|$$(git rev-parse --short HEAD)|" ./cmd/version.go
-	go build -o $(BIN_DIR)/$(BIN)
-	git checkout -- ./cmd/version.go
+	if [ -z "$(shell git status --porcelain)" ]; then \
+		sed -i "s|LOCAL|$$(git rev-parse --short HEAD)|" ./cmd/version.go; \
+		go build -o $(BIN_DIR)/$(BIN); \
+		git checkout -- ./cmd/version.go; \
+	else \
+		echo Working directory not clean, commit changes; \
+	fi
 
 build-debug: bin-dir
 	sed -i "s|LOCAL|$(git rev-parse --short HEAD)|" ./cmd/version.go
@@ -60,9 +64,5 @@ clean-systemd:
 	if [ -f $(SYSTEMD_DIR)/$(TIMER) ]; then rm $(SYSTEMD_DIR)/$(TIMER); fi
 
 release: build
-	if [ -z "$(shell git status --porcelain)" ]; then \
-		VERSION=$$($(BIN_DIR)/$(BIN) --version); \
-		git tag $$VERSION; \
-	else \
-		echo Working directory not clean, commit changes; \
-	fi
+	VERSION=$$($(BIN_DIR)/$(BIN) --version); \
+	git tag $$VERSION;
