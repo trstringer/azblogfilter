@@ -37,7 +37,10 @@ func (c Category) String() string {
 
 // Equals checks if two Category instances are the same.
 func (c Category) Equals(c2 Category) bool {
-	return strings.EqualFold(c.String(), c2.String())
+	return strings.Contains(
+		strings.ToLower(c2.String()),
+		strings.ToLower(c.String()),
+	)
 }
 
 // ContainsCategory checks if the post contains a category.
