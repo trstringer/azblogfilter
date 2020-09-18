@@ -14,6 +14,9 @@ jobs:
         run: make build
       - name: version
         run: echo "::set-output name=version::$(./bin/azblogfilter --version)"
+        id: version
+      - name: echo version
+        run: echo ${{ steps.version.outputs.version }}
         #       - name: release
         #         uses: actions/create-release@v1
         #         with:
