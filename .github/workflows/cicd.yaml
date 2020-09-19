@@ -18,8 +18,12 @@ jobs:
       - name: commit subjects
         id: commit_subjects
         run: |
+          FIRSTTEST="this is the first test"
+          SECONDTEST=$(git log --oneline -1)
           COMMITS=$(git log --pretty=%s $(git describe --abbrev=0 --tags 2> /dev/null || git log --reverse --oneline --pretty=%h | head -n 1)..HEAD | xargs -r -n 1 -d '\n' echo \*)
           echo $COMMITS
+          echo $FIRSTTEST
+          echo $SECONDTEST
           echo "::set-output name=commits::$COMMITS"
       - name: echo version
         run: echo ${{ steps.version.outputs.version }}
