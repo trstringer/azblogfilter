@@ -17,7 +17,10 @@ jobs:
         id: version
       - name: commit subjects
         id: commit_subjects
-        run: echo "::set-output name=commits::$(git log --pretty=%s $(git describe --abbrev=0 --tags 2> /dev/null || git log --reverse --oneline --pretty=%h | head -n 1)..HEAD | xargs -r -n 1 -d '\n' echo \*)"
+        run: |
+          COMMITS=$(git log --pretty=%s $(git describe --abbrev=0 --tags 2> /dev/null || git log --reverse --oneline --pretty=%h | head -n 1)..HEAD | xargs -r -n 1 -d '\n' echo \*)
+          echo $COMMITS
+          echo "::set-output name=commits::$COMMITS"
       - name: echo version
         run: echo ${{ steps.version.outputs.version }}
       - name: echo commits
