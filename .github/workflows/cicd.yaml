@@ -21,7 +21,7 @@ jobs:
           FIRSTTEST="this is the first test"
           SECONDTEST=$(git log --oneline -1)
           COMMITS=$(git log --pretty=%s $(git describe --abbrev=0 --tags 2> /dev/null || git log --reverse --oneline --pretty=%h | head -n 1)..HEAD | xargs -r -n 1 -d '\n' echo \* | tr '\n' '!')
-          ANOTHERTEST=$(echo $(echo "*this is a test!"))
+          ANOTHERTEST=$(echo date +%Y $(echo "*this is a test!"))
           echo "$COMMITS"
           echo "$FIRSTTEST"
           echo "$ANOTHERTEST"
