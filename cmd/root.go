@@ -110,7 +110,7 @@ Examples:
 			os.Exit(1)
 		}
 
-		if useCache {
+		if useCache && len(posts) > 0 {
 			cachePath, err := realCachePath()
 			if err != nil {
 				fmt.Println(err)
