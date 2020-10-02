@@ -12,11 +12,11 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
-        # - name: build
-        #   run: make build
-        # - name: version
-        #   run: echo "::set-output name=version::$(./bin/azblogfilter --version)"
-        #   id: version
+      - name: build
+        run: make build
+      - name: version
+        run: echo "::set-output name=version::$(./bin/azblogfilter --version)"
+        id: version
       - name: commit subjects
         id: commit_subjects
         run: |
@@ -26,17 +26,13 @@ jobs:
             git log --reverse --oneline --pretty=%h | head -n 1)..HEAD |
             xargs -r -n 1 -d '\n' echo \* >> $GITHUB_ENV
           echo 'EOF' >> $GITHUB_ENV
-        # - name: echo version
-        #   run: echo ${{ steps.version.outputs.version }}
-      - name: echo commits
-        run: echo "${{ env.COMMITS }}"
-        #- name: release
-        #  uses: actions/create-release@v1
-        #  with:
-        #    draft: false
-        #    prerelease: false
-        #    release_name: ${{ steps.version.outputs.version }}
-        #    tag_name: ${{ steps.version.outputs.version }}
-        #    body: ${{ 
-        #  env:
-        #    GITHUB_TOKEN: ${{ github.token }}
+      - name: release
+        uses: actions/create-release@v1
+        with:
+          draft: false
+          prerelease: false
+          release_name: ${{ steps.version.outputs.version }}
+          tag_name: ${{ steps.version.outputs.version }}
+          body: ${{ env.COMMITS }}
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
