@@ -10,27 +10,26 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v2
-      - name: build
-        run: make build
-      - name: version
-        run: echo "::set-output name=version::$(./bin/azblogfilter --version)"
-        id: version
+        with:
+          fetch-depth: 0
+        # - name: build
+        #   run: make build
+        # - name: version
+        #   run: echo "::set-output name=version::$(./bin/azblogfilter --version)"
+        #   id: version
       - name: commit subjects
         id: commit_subjects
         run: |
-          FIRSTTEST="this is the first test"
-          SECONDTEST=$(git log --oneline -1)
-          COMMITS=$(git log --pretty=%s $(git describe --abbrev=0 --tags 2> /dev/null || git log --reverse --oneline --pretty=%h | head -n 1)..HEAD | xargs -r -n 1 -d '\n' echo \* | tr '\n' '!')
-          ANOTHERTEST=$(echo $(date +%Y) "*this is a test!"))
-          echo "$COMMITS"
-          echo "$FIRSTTEST"
-          echo "$ANOTHERTEST"
-          echo "$SECONDTEST"
-          echo "::set-output name=commits::$COMMITS"
-      - name: echo version
-        run: echo ${{ steps.version.outputs.version }}
+          echo 'COMMITS<<EOF' >> $GITHUB_ENV
+          git log --pretty=%s $(git describe \
+            --abbrev=0 --tags 2> /dev/null ||
+            git log --reverse --oneline --pretty=%h | head -n 1)..HEAD |
+            xargs -r -n 1 -d '\n' echo \* >> $GITHUB_ENV
+          echo 'EOF' >> $GITHUB_ENV
+        # - name: echo version
+        #   run: echo ${{ steps.version.outputs.version }}
       - name: echo commits
-        run: echo ${{ steps.commit_subjects.outputs.commits }}
+        run: echo "${{ env.COMMITS }}"
         #- name: release
         #  uses: actions/create-release@v1
         #  with:
