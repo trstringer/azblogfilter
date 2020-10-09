@@ -1,11 +1,13 @@
+name: release
+
 on:
   push:
-    branch:
-      - master
+    tags:
+      - '*'
 
 jobs:
-  build:
-    name: cicd
+  build_release:
+    name: build_release
     runs-on: ubuntu-latest
     steps:
       - name: checkout
