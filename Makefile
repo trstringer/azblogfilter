@@ -33,6 +33,29 @@ build-linux: bin-dir
 		GOOS=$(LINUX_OS) GOARCH=$(ARCH) go build -o $(BIN_DIR)/$(BIN); \
 		tar -czvf $(BIN_DIR)/$(BIN).$(LINUX_OS)-$(ARCH).tar.gz $(BIN_DIR)/$(BIN); \
 		git checkout -- ./cmd/version.go; \
+		rm $(BIN_DIR)/$(BIN); \
+	else \
+		echo Working directory not clean, commit changes; \
+	fi
+
+build-darwin: bin-dir
+	if [ -z "$(shell git status --porcelain)" ]; then \
+		sed -i "s|LOCAL|$$(git rev-parse --short HEAD)|" ./cmd/version.go; \
+		GOOS=$(MAC_OS) GOARCH=$(ARCH) go build -o $(BIN_DIR)/$(BIN); \
+		tar -czvf $(BIN_DIR)/$(BIN).$(MAC_OS)-$(ARCH).tar.gz $(BIN_DIR)/$(BIN); \
+		git checkout -- ./cmd/version.go; \
+		rm $(BIN_DIR)/$(BIN); \
+	else \
+		echo Working directory not clean, commit changes; \
+	fi
+
+build-windows: bin-dir
+	if [ -z "$(shell git status --porcelain)" ]; then \
+		sed -i "s|LOCAL|$$(git rev-parse --short HEAD)|" ./cmd/version.go; \
+		GOOS=$(WINDOWS_OS) GOARCH=$(ARCH) go build -o $(BIN_DIR)/$(BIN); \
+		tar -czvf $(BIN_DIR)/$(BIN).$(WINDOWS_OS)-$(ARCH).tar.gz $(BIN_DIR)/$(BIN); \
+		git checkout -- ./cmd/version.go; \
+		rm $(BIN_DIR)/$(BIN); \
 	else \
 		echo Working directory not clean, commit changes; \
 	fi
