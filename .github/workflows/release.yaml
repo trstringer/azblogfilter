@@ -19,8 +19,11 @@ jobs:
       - name: version
         run: echo "::set-output name=version::$(./bin/azblogfilter --version)"
         id: version
+      - name: build artifacts
+        run: make build-linux && make build-windows && make build-darwin
       - name: release
         uses: actions/create-release@v1
+        id: create_release
         with:
           draft: false
           prerelease: false
@@ -29,3 +32,30 @@ jobs:
           body_path: CHANGELOG.md
         env:
           GITHUB_TOKEN: ${{ github.token }}
+      - name: upload linux artifact
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./bin/azblogfilter.linux-amd64.tar.gz
+          asset_name: azblogfilter.linux-amd64.tar.gz
+          asset_content_type: application/gzip
+      - name: upload darwin artifact
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./bin/azblogfilter.darwin-amd64.tar.gz
+          asset_name: azblogfilter.darwin-amd64.tar.gz
+          asset_content_type: application/gzip
+      - name: upload windows artifact
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./bin/azblogfilter.windows-amd64.tar.gz
+          asset_name: azblogfilter.windows-amd64.tar.gz
+          asset_content_type: application/gzip
