@@ -1,5 +1,7 @@
 # azblogfilter - Azure Blog Filter
 
+![ci](https://github.com/trstringer/azblogfilter/workflows/ci/badge.svg)
+
 ## Description
 
 Fetch and filter Azure blog posts (announcements and updates) based off of interests.
@@ -15,6 +17,8 @@ Otherwise, if you want to run from trunk you could git clone this repo and `make
 If you are a systemd user, you can install a systemd unit and timer to routinely check for blog updates by running `make install-systemd`.
 
 ## Usage
+
+azblogfilter filters blog posts either by a cached value (good for the usage of "what are the new blog posts that have been published since I last checked?" This is the mechanism used in the systemd service). Or it can use `--since` to go back in the past for blog posts without using cache. The `--since` parameter takes a systemd time span (`man 7 systemd.time`). E.g. to get all blog posts in the past 3 days you could specify `--since -3d`.
 
 ```
 Filter posts by keywords and categories.
