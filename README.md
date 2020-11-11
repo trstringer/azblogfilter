@@ -93,7 +93,8 @@ I use `dunstify` for notifications. If you run `make install-notify` it will pla
 
 #### Create a release
 
-```
-$ make release
-$ git push --tags origin master
-```
+1. Add changes to `./CHANGELOG.md`.
+1. Change the version in `./cmd/version.go` (leave `LOCAL`, just change the `major.minor.build` part).
+1. Push to upstream: `git add . && git commit -m "commit message" && git push origin master`.
+1. Run `make release` to create the git tag.
+1. Push to upstream: `git push --tags origin master`.
