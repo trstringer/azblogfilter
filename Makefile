@@ -1,5 +1,6 @@
 BIN_DIR=./bin
 BIN=azblogfilter
+BIN_WINDOWS=azblogfilter.exe
 BIN_DEBUG=$(BIN).debug
 GCFLAGS_DEBUG="all=-N -l"
 SYSTEMD_DIR=~/.config/systemd/user
@@ -52,10 +53,10 @@ build-darwin: bin-dir
 build-windows: bin-dir
 	if [ -z "$(shell git status --porcelain)" ]; then \
 		sed -i "s|LOCAL|$$(git rev-parse --short HEAD)|" ./cmd/version.go; \
-		GOOS=$(WINDOWS_OS) GOARCH=$(ARCH) go build -o $(BIN_DIR)/$(BIN); \
-		tar -czvf $(BIN_DIR)/$(BIN).$(WINDOWS_OS)-$(ARCH).tar.gz $(BIN_DIR)/$(BIN); \
+		GOOS=$(WINDOWS_OS) GOARCH=$(ARCH) go build -o $(BIN_DIR)/$(BIN_WINDOWS); \
+		zip -9 -y $(BIN_DIR)/$(BIN).$(WINDOWS_OS)-$(ARCH).zip $(BIN_DIR)/$(BIN_WINDOWS); \
 		git checkout -- ./cmd/version.go; \
-		rm $(BIN_DIR)/$(BIN); \
+		rm $(BIN_DIR)/$(BIN_WINDOWS); \
 	else \
 		echo Working directory not clean, commit changes; \
 	fi
