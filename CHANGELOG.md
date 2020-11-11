@@ -1,1 +1,2 @@
-* Add artifacts to releases
+* Fix Windows output build artifact
+* Change release tag ref
