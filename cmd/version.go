@@ -1,3 +1,3 @@
 package cmd
 
-const version = "v0.1.9-LOCAL"
+const version = "v0.1.10-LOCAL"
